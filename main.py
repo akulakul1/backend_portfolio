@@ -1,17 +1,49 @@
-from email.utils import formataddr
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel, EmailStr
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+app = FastAPI()
+
+origins = ["https://akul-one.vercel.app"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+class EmailSchema(BaseModel):
+    first: str
+    last: str
+    email: EmailStr
+    subject: str
+    message: str
+
+# ✅ This route must be present
+@app.get("/")
+async def root():
+    return {"message": "Welcome to the backend API"}
 
 @app.post("/send-email")
 async def send_email(data: EmailSchema):
     try:
-        sender = os.getenv("EMAIL_SENDER")        # Your email, for SMTP auth
-        receiver = os.getenv("EMAIL_RECEIVER")    # Your email, to receive messages
+        sender = os.getenv("EMAIL_SENDER")
+        receiver = os.getenv("EMAIL_RECEIVER")
         password = os.getenv("EMAIL_APP_PASSWORD")
 
         msg = MIMEMultipart()
         msg["From"] = sender
         msg["To"] = receiver
         msg["Subject"] = f"New message from {data.first} {data.last}"
-        msg.add_header('Reply-To', data.email)  # Add visitor's email as Reply-To
 
         body = f"""
 Name: {data.first} {data.last}
