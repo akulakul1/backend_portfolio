@@ -1,6 +1,5 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
 from pydantic import BaseModel, EmailStr
 import smtplib
 from email.mime.text import MIMEText
@@ -12,7 +11,10 @@ load_dotenv()
 
 app = FastAPI()
 
-origins = ["https://akul-one.vercel.app"]
+origins = [
+    "https://akul-one.vercel.app",
+      # Change this to your frontend URL
+]
 
 app.add_middleware(
     CORSMiddleware,
@@ -29,21 +31,15 @@ class EmailSchema(BaseModel):
     subject: str
     message: str
 
-# Handle GET and HEAD for "/"
-@app.get("/", methods=["GET", "HEAD"])
-async def root():
-    return {"message": "Welcome to the backend API"}
-
 @app.post("/send-email")
 async def send_email(data: EmailSchema):
     try:
-        sender = os.getenv("EMAIL_SENDER")        # Your email (to login SMTP)
-        receiver = os.getenv("EMAIL_RECEIVER")    # Your receiving email
+        sender = os.getenv("EMAIL_SENDER")
+        receiver = os.getenv("EMAIL_RECEIVER")
         password = os.getenv("EMAIL_APP_PASSWORD")
 
         msg = MIMEMultipart()
-        # Set From header to visitor email to show who sent message
-        msg["From"] = data.email
+        msg["From"] = sender
         msg["To"] = receiver
         msg["Subject"] = f"New message from {data.first} {data.last}"
 
