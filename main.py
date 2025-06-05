@@ -12,8 +12,7 @@ load_dotenv()
 app = FastAPI()
 
 origins = [
-    "https://akul-one.vercel.app/",
-      # Change this to your frontend URL
+    "https://akul-one.vercel.app",  # Removed trailing slash
 ]
 
 app.add_middleware(
@@ -30,6 +29,10 @@ class EmailSchema(BaseModel):
     email: EmailStr
     subject: str
     message: str
+
+@app.get("/")
+async def root():
+    return {"message": "Welcome to the backend API"}
 
 @app.post("/send-email")
 async def send_email(data: EmailSchema):
