@@ -12,7 +12,7 @@ load_dotenv()
 app = FastAPI()
 
 origins = [
-    "akulportfolio-kmg7reo5y-akulakul1s-projects.vercel.app",
+    "http//:akulportfolio-kmg7reo5y-akulakul1s-projects.vercel.app","https://akulportfolio.vercel.app"
 ]
 
 app.add_middleware(
