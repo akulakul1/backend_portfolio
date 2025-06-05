@@ -11,9 +11,7 @@ load_dotenv()
 
 app = FastAPI()
 
-origins = [
-    "https://akul-one.vercel.app",  # Removed trailing slash
-]
+origins = ["https://akul-one.vercel.app"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -30,6 +28,7 @@ class EmailSchema(BaseModel):
     subject: str
     message: str
 
+# ✅ This route must be present
 @app.get("/")
 async def root():
     return {"message": "Welcome to the backend API"}
